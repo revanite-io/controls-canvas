@@ -1,0 +1,23 @@
+metadata:
+    id: ""
+    title: ""
+    description: ""
+    version: ""
+    last-modified: ""
+    applicability-categories: []
+    mapping-references: []
+control-families: []
+threats: []
+capabilities: []
+shared-controls:
+    - reference-id: CCC
+      identifiers:
+        - CCC.C01
+shared-threats:
+    - reference-id: CCC
+      identifiers:
+        - CCC.TH02
+shared-capabilities:
+    - reference-id: CCC
+      identifiers:
+        - CCC.F01
