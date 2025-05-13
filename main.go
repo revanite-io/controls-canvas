@@ -2,14 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/revanite-io/sci/pkg/layer2"
+	"gopkg.in/yaml.v3"
 )
 
 var (
 	catalogName string
+	catalog     layer2.Catalog
 
 	selectedCapabilities      map[string]item
 	triedToReselectCapability map[string]bool // Just having fun with this one
@@ -36,4 +40,11 @@ func main() {
 		fmt.Println("Error running model for catalog input:", err)
 		os.Exit(1)
 	}
+	data, err := yaml.Marshal(catalog)
+	if err != nil {
+		log.Printf("Error marshalling catalog: %v\n", err)
+		os.Exit(1)
+	}
+	log.Printf("\n%s", string(data))
+	os.Exit(0)
 }

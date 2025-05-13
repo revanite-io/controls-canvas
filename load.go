@@ -106,7 +106,8 @@ func loadChoices() (choices []list.Item) {
 			}
 		}
 
-		description := fmt.Sprintf("Threats: %v | Controls: %v", len(threatList), len(controlList))
+		description := capability.Data.Description
+		description += fmt.Sprintf("Threats: %v | Controls: %v", len(threatList), len(controlList))
 
 		choice := item{
 			id:          capability.Data.Id,

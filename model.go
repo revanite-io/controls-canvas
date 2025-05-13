@@ -26,12 +26,6 @@ func newCatalogInputModel() model {
 	catalogCanvas := list.New(items, delegate, 0, 0)
 	catalogCanvas.Title = titleText
 	catalogCanvas.Styles.Title = titleStyle
-	catalogCanvas.AdditionalFullHelpKeys = func() []key.Binding {
-		return []key.Binding{
-			listKeys.toggleSpinner,
-			listKeys.toggleHelpMenu,
-		}
-	}
 
 	return model{
 		list:         catalogCanvas,
@@ -59,16 +53,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, m.keys.toggleSpinner):
-			cmd := m.list.ToggleSpinner()
-			return m, cmd
-
-		case key.Matches(msg, m.keys.toggleHelpMenu):
-			m.list.SetShowHelp(!m.list.ShowHelp())
-			return m, nil
-
 		case key.Matches(msg, m.keys.finalizeSelection):
-			catalog := generateOutputCatalog()
+			catalog = generateOutputCatalog()
 
 			// TODO: display catalog and prompt user for output file name
 
@@ -77,7 +63,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Println("Failed to write output.yaml: " + err.Error())
 			}
 			return m, tea.Quit
-
 		}
 	}
 

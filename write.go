@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"sort"
 
 	"github.com/revanite-io/sci/pkg/layer2"
 	"gopkg.in/yaml.v3"
@@ -21,14 +22,18 @@ func generateOutputCatalog() (outputCatalog layer2.Catalog) {
 	var sharedCapabilities []string
 
 	for _, item := range selectedCapabilities {
-		sharedCapabilities = append(sharedCapabilities, item.id)
+		sharedCapabilities = appendIfMissing(sharedCapabilities, item.id)
 		for _, threat := range item.capability.Threats {
-			sharedThreats = append(sharedThreats, threat.Data.Id)
+			sharedThreats = appendIfMissing(sharedThreats, threat.Data.Id)
 			for _, control := range threat.Controls {
-				sharedControls = append(sharedControls, control.Data.Id)
+				sharedControls = appendIfMissing(sharedControls, control.Data.Id)
 			}
 		}
 	}
+
+	sort.Sort(sort.StringSlice(sharedControls))
+	sort.Sort(sort.StringSlice(sharedThreats))
+	sort.Sort(sort.StringSlice(sharedCapabilities))
 
 	outputCatalog = layer2.Catalog{
 		SharedControls: []layer2.Mapping{
@@ -51,4 +56,13 @@ func generateOutputCatalog() (outputCatalog layer2.Catalog) {
 		},
 	}
 	return outputCatalog
+}
+
+func appendIfMissing(slice []string, i string) []string {
+	for _, ele := range slice {
+		if ele == i {
+			return slice
+		}
+	}
+	return append(slice, i)
 }
