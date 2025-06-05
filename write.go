@@ -8,7 +8,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func writeOutputCatalog(catalog layer2.Catalog, path string) error {
+func writeOutputCatalog(path string) error {
+	catalog := generateOutputCatalog()
 	data, err := yaml.Marshal(catalog)
 	if err != nil {
 		return err

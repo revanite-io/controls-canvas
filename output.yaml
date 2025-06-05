@@ -12,49 +12,15 @@ capabilities: []
 shared-controls:
     - reference-id: CCC
       identifiers:
-        - CCC.C01
         - CCC.C02
         - CCC.C03
         - CCC.C04
         - CCC.C05
-        - CCC.C06
-        - CCC.C07
-        - CCC.C08
-        - CCC.C09
-        - CCC.C11
 shared-threats:
     - reference-id: CCC
       identifiers:
         - CCC.TH01
-        - CCC.TH02
-        - CCC.TH03
-        - CCC.TH05
-        - CCC.TH06
-        - CCC.TH07
-        - CCC.TH08
-        - CCC.TH09
-        - CCC.TH10
-        - CCC.TH11
-        - CCC.TH12
-        - CCC.TH15
-        - CCC.TH16
 shared-capabilities:
     - reference-id: CCC
       identifiers:
-        - CCC.F01
-        - CCC.F02
-        - CCC.F03
-        - CCC.F04
-        - CCC.F05
         - CCC.F06
-        - CCC.F07
-        - CCC.F08
-        - CCC.F09
-        - CCC.F10
-        - CCC.F11
-        - CCC.F12
-        - CCC.F13
-        - CCC.F14
-        - CCC.F15
-        - CCC.F16
-        - CCC.F17
