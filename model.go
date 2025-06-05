@@ -119,6 +119,7 @@ func (m model) View() string {
 	// Minimum dimensions for showing border
 	const minWidth = 80
 	const minHeight = 24
+	const twoColumnWidth = 180
 
 	// Base content
 	var content string
@@ -137,16 +138,54 @@ func (m model) View() string {
 			"\nWrite to file? (Y/N)",
 		)
 	} else {
-		content = m.list.View()
+		// Selection screen - handle two column layout if wide enough
+		if m.width >= twoColumnWidth {
+			// Generate current catalog data
+			catalog := generateOutputCatalog()
+			data, err := yaml.Marshal(catalog)
+			if err != nil {
+				data = []byte("Error generating catalog preview")
+			}
+
+			// Create a fixed-height container for the list
+			listContainer := lipgloss.NewStyle().
+				Width(m.width/2 - 2).
+				Height(m.height - 4).
+				Render(m.list.View())
+
+			// Create a fixed-height container for the catalog preview
+			catalogPreview := lipgloss.NewStyle().
+				Width(m.width/2 - 4).
+				Height(m.height - 4).
+				Render(string(data))
+
+			// Join them horizontally with fixed heights
+			content = lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				listContainer,
+				lipgloss.NewStyle().PaddingLeft(2).Render(catalogPreview),
+			)
+		} else {
+			content = m.list.View()
+		}
 	}
+
+	// Calculate available space for content
+	contentStyle := lipgloss.NewStyle().
+		Width(m.width - 4).  // Account for border and padding
+		Height(m.height - 4) // Account for border and padding
 
 	// Apply border if window is large enough
 	if m.width >= minWidth && m.height >= minHeight {
 		borderStyle := lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#25A065"))
-		content = borderStyle.Render(content)
+			BorderForeground(lipgloss.Color("#25A065")).
+			Padding(1, 1).  // Add padding inside the border
+			Width(m.width - 2).  // Account for outer padding
+			Height(m.height - 2) // Account for outer padding
+		
+		return borderStyle.Render(contentStyle.Render(content))
 	}
 
-	return appStyle.Render(content)
+	return content
 }
