@@ -6,14 +6,27 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 	d := list.NewDefaultDelegate()
 
-	d.UpdateFunc = func(msg tea.Msg, model *list.Model) tea.Cmd {
-		var title string
+	// Set up styles
+	d.Styles.SelectedTitle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#25A065")).
+		Bold(true)
 
+	d.Styles.SelectedDesc = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#1A6B4A"))
+
+	d.Styles.NormalTitle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFFDF5"))
+
+	d.Styles.NormalDesc = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#A8A8A8"))
+
+	d.UpdateFunc = func(msg tea.Msg, model *list.Model) tea.Cmd {
 		if _, ok := model.SelectedItem().(item); !ok {
 			return nil
 		}
@@ -36,13 +49,15 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 					return model.NewStatusMessage(statusMessageStyle("Selected " + capabilityId))
 				}
 
-			case key.Matches(msg, keys.remove):
-				index := model.Index()
-				model.RemoveItem(index)
-				if len(model.Items()) == 0 {
-					keys.remove.SetEnabled(false)
+			case msg.Type == tea.KeyBackspace || msg.Type == tea.KeyDelete:
+				if i, ok := model.SelectedItem().(item); ok {
+					capabilityId := strings.Split(i.title, ":")[0]
+					if _, ok := selectedCapabilities[capabilityId]; ok {
+						delete(selectedCapabilities, capabilityId)
+						delete(triedToReselectCapability, capabilityId)
+						return model.NewStatusMessage(statusMessageStyle("Deselected " + capabilityId))
+					}
 				}
-				return model.NewStatusMessage(statusMessageStyle("Removed from canvas: " + title))
 			}
 		}
 
