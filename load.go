@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 	"sort"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -93,43 +94,18 @@ func loadChoices() (choices []list.Item) {
 		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
 		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
 	}
-	data := loadData(defaultUrls)
-
-	for _, capability := range data {
-		var threatList []string
-		var controlList []string
-		for _, threat := range capability.Threats {
-			threatList = append(threatList, threat.Data.Id)
-			for _, control := range threat.Controls {
-				if !slices.Contains(controlList, control.Data.Id) {
-					controlList = append(controlList, control.Data.Id)
-				}
-			}
-		}
-
-		description := capability.Data.Description
-		description += fmt.Sprintf("Threats: %v | Controls: %v", len(threatList), len(controlList))
-
-		choice := item{
-			id:          capability.Data.Id,
-			title:       capability.Data.Title,
-			capability:  capability,
-			description: description,
-		}
-		choices = append(choices, choice)
-	}
-
-	// Sort by title
-	sort.Slice(choices, func(i, j int) bool {
-		return choices[i].(item).capability.Data.Id < choices[j].(item).capability.Data.Id
-	})
-
-	return choices
+	return loadChoicesWithUrls(defaultUrls)
 }
 
 func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 	data := loadData(urls)
 
+	// Get the current model's description width
+	width := 80 // Default width
+	if m, ok := currentModel.(model); ok {
+		width = m.descWidth
+	}
+
 	for _, capability := range data {
 		var threatList []string
 		var controlList []string
@@ -142,8 +118,15 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 			}
 		}
 
-		description := capability.Data.Description
-		description += fmt.Sprintf("Threats: %v | Controls: %v", len(threatList), len(controlList))
+		description := strings.Split(capability.Data.Description, "\n")[0]
+		stats := fmt.Sprintf(" | Threats: %v | Controls: %v", len(threatList), len(controlList))
+		
+		// Calculate available space for description
+		availableWidth := width - len(stats)
+		if len(description) > availableWidth {
+			description = description[:availableWidth-3] + "..."
+		}
+		description += stats
 
 		choice := item{
 			id:          capability.Data.Id,
@@ -161,3 +144,6 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 
 	return choices
 }
+
+// Add a global variable to track the current model
+var currentModel interface{}

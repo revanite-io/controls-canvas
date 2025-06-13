@@ -17,6 +17,7 @@ type model struct {
 	width        int
 	height       int
 	selectedUrls []string
+	descWidth    int // Available width for descriptions
 }
 
 type catalogItem struct {
@@ -73,12 +74,24 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
+	// Set the current model for width calculations
+	currentModel = m
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
 		h, v := appStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
+		
+		// Calculate available width for descriptions
+		// Account for padding, borders, and title width
+		m.descWidth = (msg.Width-h)/2 - 10 // Half of available width minus padding
+		if m.state == "selecting" {
+			// Update the list items with new width
+			choices := loadChoicesWithUrls(m.selectedUrls)
+			m.list.SetItems(choices)
+		}
 
 	case tea.KeyMsg:
 		// Don't match any of the keys below if we're actively filtering.

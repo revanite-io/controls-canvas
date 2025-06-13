@@ -26,6 +26,9 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 	d.Styles.NormalDesc = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#A8A8A8"))
 
+	// Enable multi-line descriptions
+	d.ShowDescription = true
+
 	d.UpdateFunc = func(msg tea.Msg, model *list.Model) tea.Cmd {
 		if _, ok := model.SelectedItem().(item); !ok {
 			return nil
