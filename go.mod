@@ -1,8 +1,8 @@
 module github.com/revanite-io/controls-canvas
 
-go 1.23.4
+go 1.23.0
 
-toolchain go1.23.7
+toolchain go1.23.10
 
 require (
 	github.com/charmbracelet/bubbles v0.20.0

@@ -148,6 +148,3 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 
 	return choices
 }
-
-// Add a global variable to track the current model
-var currentModel interface{}
