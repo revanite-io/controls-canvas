@@ -14,7 +14,6 @@ type model struct {
 	delegateKeys *delegateKeyMap
 	state        string // "catalog", "naming", "selecting", or "confirming"
 	preview      string
-	catalogName  string
 	width        int
 	height       int
 	selectedUrls []string
@@ -117,17 +116,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case m.state == "naming":
 			switch msg.Type {
 			case tea.KeyEnter:
-				if m.catalogName != "" {
-					m.list.Title = titleText + ": " + m.catalogName
+				if catalogName != "" {
+					m.list.Title = titleText + ": " + catalogName
 					m.state = "selecting"
 					return m, nil
 				}
 			case tea.KeyBackspace:
-				if len(m.catalogName) > 0 {
-					m.catalogName = m.catalogName[:len(m.catalogName)-1]
+				if len(catalogName) > 0 {
+					catalogName = catalogName[:len(catalogName)-1]
 				}
 			case tea.KeyRunes:
-				m.catalogName += string(msg.Runes)
+				catalogName += string(msg.Runes)
 			}
 			return m, nil
 
@@ -180,7 +179,7 @@ func (m model) View() string {
 		content = lipgloss.JoinVertical(
 			lipgloss.Left,
 			m.list.Styles.Title.Render(m.list.Title),
-			"Enter catalog name: "+m.catalogName,
+			"Enter catalog name: "+catalogName,
 		)
 	} else if m.state == "confirming" {
 		content = lipgloss.JoinVertical(

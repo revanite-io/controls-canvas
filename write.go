@@ -37,6 +37,9 @@ func generateOutputCatalog() (outputCatalog layer2.Catalog) {
 	sort.Sort(sort.StringSlice(sharedCapabilities))
 
 	outputCatalog = layer2.Catalog{
+		Metadata: layer2.Metadata{
+			Title: catalogName,
+		},
 		SharedControls: []layer2.Mapping{
 			{
 				ReferenceId: "CCC",
