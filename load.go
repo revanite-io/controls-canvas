@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"slices"
-	"strings"
 	"sort"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/revanite-io/sci/pkg/layer2"
@@ -100,14 +100,12 @@ func loadChoices() (choices []list.Item) {
 func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 	data := loadData(urls)
 
-	// Get the current model's description width
-	width := 80 // Default width
+	width := 80
 	if m, ok := currentModel.(model); ok {
 		width = m.descWidth
 	}
 
-	// If width is too small, just show stats
-	minStatsWidth := 20 // Minimum width needed for stats
+	minStatsWidth := 20
 
 	for _, capability := range data {
 		var threatList []string
@@ -128,7 +126,6 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 			description = stats
 		} else {
 			description = strings.Split(capability.Data.Description, "\n")[0]
-			// Calculate available space for description
 			availableWidth := width - len(stats)
 			if availableWidth > 0 && len(description) > availableWidth {
 				description = description[:availableWidth-3] + "..."
@@ -145,7 +142,6 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 		choices = append(choices, choice)
 	}
 
-	// Sort by title
 	sort.Slice(choices, func(i, j int) bool {
 		return choices[i].(item).capability.Data.Id < choices[j].(item).capability.Data.Id
 	})

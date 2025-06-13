@@ -12,13 +12,13 @@ type model struct {
 	list         list.Model
 	keys         *listKeyMap
 	delegateKeys *delegateKeyMap
-	state        string // "catalog", "naming", "selecting", or "confirming"
+	state        string
 	preview      string
 	width        int
 	height       int
 	selectedUrls []string
-	descWidth    int    // Available width for descriptions
-	sizeWarning  string // Warning message for small window sizes
+	descWidth    int
+	sizeWarning  string
 }
 
 type catalogItem struct {
@@ -75,7 +75,6 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
-	// Set the current model for width calculations
 	currentModel = m
 
 	switch msg := msg.(type) {
@@ -85,18 +84,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		h, v := appStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 		
-		// Calculate available width for descriptions
-		// Account for padding, borders, and title width
-		m.descWidth = (msg.Width-h)/2 - 10 // Half of available width minus padding
+		m.descWidth = (msg.Width-h)/2 - 10
 		
-		// Check if window is too small
-		const minWidth = 60 // Minimum width needed for reasonable display
+		const minWidth = 60
 		if msg.Width < minWidth {
 			m.sizeWarning = "Window too small. Please resize to view content."
 			m.descWidth = 0
 		} else {
 			m.sizeWarning = ""
-			// Update the list items with new width
 			if m.state == "selecting" {
 				choices := loadChoicesWithUrls(m.selectedUrls)
 				m.list.SetItems(choices)
@@ -104,7 +99,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case tea.KeyMsg:
-		// Don't match any of the keys below if we're actively filtering.
 		if m.list.FilterState() == list.Filtering {
 			break
 		}
@@ -116,19 +110,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if item, ok := m.list.SelectedItem().(catalogItem); ok {
 					m.selectedUrls = item.urls
 					if item.title == "Common Cloud Controls" {
-						// Load the catalog data
 						choices := loadChoicesWithUrls(item.urls)
 						m.list.SetItems(choices)
 						m.list.Title = titleText
 						m.state = "naming"
 					} else {
-						// Handle placeholder option - quit the program
 						return m, tea.Quit
 					}
 				}
 				return m, nil
 			case tea.KeyUp, tea.KeyDown:
-				// Let the list handle up/down navigation
 				newListModel, cmd := m.list.Update(msg)
 				m.list = newListModel
 				cmds = append(cmds, cmd)
@@ -180,7 +171,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// This will also call our delegate's update function.
 	newListModel, cmd := m.list.Update(msg)
 	m.list = newListModel
 	cmds = append(cmds, cmd)
@@ -189,17 +179,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	// Minimum dimensions for showing border
 	const minWidth = 80
 	const minHeight = 24
-	const twoColumnWidth = 120 // Reduced from 180
+	const twoColumnWidth = 120
 
-	// If window is too small, show warning
 	if m.sizeWarning != "" {
 		return m.sizeWarning
 	}
 
-	// Base content
 	var content string
 	if m.state == "catalog" {
 		content = m.list.View()
@@ -218,32 +205,26 @@ func (m model) View() string {
 			"\nWrite to file? (Y/N)",
 		)
 	} else {
-		// Selection screen - handle two column layout if wide enough
 		if m.width >= twoColumnWidth {
-			// Generate current catalog data
 			catalog := generateOutputCatalog()
 			data, err := yaml.Marshal(catalog)
 			if err != nil {
 				data = []byte("Error generating catalog preview")
 			}
 
-			// Calculate widths for list and preview
-			listWidth := (m.width * 3) / 5  // 60% for list
-			previewWidth := (m.width * 2) / 5 - 4  // 40% for preview, minus padding
+			listWidth := (m.width * 3) / 5
+			previewWidth := (m.width * 2) / 5 - 4
 
-			// Create a fixed-height container for the list
 			listContainer := lipgloss.NewStyle().
 				Width(listWidth).
 				Height(m.height - 4).
 				Render(m.list.View())
 
-			// Create a fixed-height container for the catalog preview
 			catalogPreview := lipgloss.NewStyle().
 				Width(previewWidth).
 				Height(m.height - 4).
 				Render(string(data))
 
-			// Join them horizontally with fixed heights
 			content = lipgloss.JoinHorizontal(
 				lipgloss.Top,
 				listContainer,
@@ -254,12 +235,10 @@ func (m model) View() string {
 		}
 	}
 
-	// Calculate available space for content
 	contentStyle := lipgloss.NewStyle().
-		Width(m.width - 4).  // Account for border and padding
-		Height(m.height - 4) // Account for border and padding
+		Width(m.width - 4).
+		Height(m.height - 4)
 
-	// Apply border if window is large enough
 	if m.width >= minWidth && m.height >= minHeight {
 		content = appStyle.Render(contentStyle.Render(content))
 	} else {
@@ -268,3 +247,5 @@ func (m model) View() string {
 
 	return content
 }
+
+var currentModel interface{}
