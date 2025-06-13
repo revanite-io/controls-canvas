@@ -1,4 +1,4 @@
-module greenfield
+module github.com/revanite-io/controls-canvas
 
 go 1.23.4
 
