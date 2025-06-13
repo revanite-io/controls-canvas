@@ -17,7 +17,8 @@ type model struct {
 	width        int
 	height       int
 	selectedUrls []string
-	descWidth    int // Available width for descriptions
+	descWidth    int    // Available width for descriptions
+	sizeWarning  string // Warning message for small window sizes
 }
 
 type catalogItem struct {
@@ -87,10 +88,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Calculate available width for descriptions
 		// Account for padding, borders, and title width
 		m.descWidth = (msg.Width-h)/2 - 10 // Half of available width minus padding
-		if m.state == "selecting" {
+		
+		// Check if window is too small
+		const minWidth = 60 // Minimum width needed for reasonable display
+		if msg.Width < minWidth {
+			m.sizeWarning = "Window too small. Please resize to view content."
+			m.descWidth = 0
+		} else {
+			m.sizeWarning = ""
 			// Update the list items with new width
-			choices := loadChoicesWithUrls(m.selectedUrls)
-			m.list.SetItems(choices)
+			if m.state == "selecting" {
+				choices := loadChoicesWithUrls(m.selectedUrls)
+				m.list.SetItems(choices)
+			}
 		}
 
 	case tea.KeyMsg:
@@ -183,6 +193,11 @@ func (m model) View() string {
 	const minWidth = 80
 	const minHeight = 24
 	const twoColumnWidth = 180
+
+	// If window is too small, show warning
+	if m.sizeWarning != "" {
+		return m.sizeWarning
+	}
 
 	// Base content
 	var content string

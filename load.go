@@ -106,6 +106,9 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 		width = m.descWidth
 	}
 
+	// If width is too small, just show stats
+	minStatsWidth := 20 // Minimum width needed for stats
+
 	for _, capability := range data {
 		var threatList []string
 		var controlList []string
@@ -118,15 +121,20 @@ func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 			}
 		}
 
-		description := strings.Split(capability.Data.Description, "\n")[0]
 		stats := fmt.Sprintf(" | Threats: %v | Controls: %v", len(threatList), len(controlList))
-		
-		// Calculate available space for description
-		availableWidth := width - len(stats)
-		if len(description) > availableWidth {
-			description = description[:availableWidth-3] + "..."
+		var description string
+
+		if width <= minStatsWidth {
+			description = stats
+		} else {
+			description = strings.Split(capability.Data.Description, "\n")[0]
+			// Calculate available space for description
+			availableWidth := width - len(stats)
+			if availableWidth > 0 && len(description) > availableWidth {
+				description = description[:availableWidth-3] + "..."
+			}
+			description += stats
 		}
-		description += stats
 
 		choice := item{
 			id:          capability.Data.Id,
