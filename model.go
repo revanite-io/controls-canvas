@@ -192,7 +192,7 @@ func (m model) View() string {
 	// Minimum dimensions for showing border
 	const minWidth = 80
 	const minHeight = 24
-	const twoColumnWidth = 180
+	const twoColumnWidth = 120 // Reduced from 180
 
 	// If window is too small, show warning
 	if m.sizeWarning != "" {
@@ -227,15 +227,19 @@ func (m model) View() string {
 				data = []byte("Error generating catalog preview")
 			}
 
+			// Calculate widths for list and preview
+			listWidth := (m.width * 3) / 5  // 60% for list
+			previewWidth := (m.width * 2) / 5 - 4  // 40% for preview, minus padding
+
 			// Create a fixed-height container for the list
 			listContainer := lipgloss.NewStyle().
-				Width(m.width/2 - 2).
+				Width(listWidth).
 				Height(m.height - 4).
 				Render(m.list.View())
 
 			// Create a fixed-height container for the catalog preview
 			catalogPreview := lipgloss.NewStyle().
-				Width(m.width/2 - 4).
+				Width(previewWidth).
 				Height(m.height - 4).
 				Render(string(data))
 
