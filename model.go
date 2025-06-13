@@ -12,33 +12,58 @@ type model struct {
 	list         list.Model
 	keys         *listKeyMap
 	delegateKeys *delegateKeyMap
-	state        string // "naming", "selecting", or "confirming"
+	state        string // "catalog", "naming", "selecting", or "confirming"
 	preview      string
 	catalogName  string
 	width        int
 	height       int
+	selectedUrls []string
 }
+
+type catalogItem struct {
+	title       string
+	description string
+	urls        []string
+}
+
+func (i catalogItem) Title() string       { return i.title }
+func (i catalogItem) Description() string { return i.description }
+func (i catalogItem) FilterValue() string { return i.title }
 
 func newCatalogInputModel() model {
 	var (
-		// itemGenerator randomItemGenerator
 		delegateKeys = newDelegateKeyMap()
 		listKeys     = newListKeyMap()
 	)
 
-	items := loadChoices()
+	items := []list.Item{
+		catalogItem{
+			title:       "Common Cloud Controls",
+			description: "Default catalog with cloud security controls",
+			urls: []string{
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/controls.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
+			},
+		},
+		catalogItem{
+			title:       "Future reference options will be added here",
+			description: "(Selecting this placeholder will just close the program)",
+			urls:        []string{},
+		},
+	}
 
 	// Setup list
 	delegate := newItemDelegate(delegateKeys)
 	catalogCanvas := list.New(items, delegate, 0, 0)
-	catalogCanvas.Title = titleText
+	catalogCanvas.Title = "Select Catalog"
 	catalogCanvas.Styles.Title = titleStyle
 
 	return model{
 		list:         catalogCanvas,
 		keys:         listKeys,
 		delegateKeys: delegateKeys,
-		state:        "naming",
+		state:        "catalog",
 	}
 }
 
@@ -63,6 +88,32 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
+		case m.state == "catalog":
+			switch msg.Type {
+			case tea.KeyEnter:
+				if item, ok := m.list.SelectedItem().(catalogItem); ok {
+					m.selectedUrls = item.urls
+					if item.title == "Common Cloud Controls" {
+						// Load the catalog data
+						choices := loadChoicesWithUrls(item.urls)
+						m.list.SetItems(choices)
+						m.list.Title = titleText
+						m.state = "naming"
+					} else {
+						// Handle placeholder option - quit the program
+						return m, tea.Quit
+					}
+				}
+				return m, nil
+			case tea.KeyUp, tea.KeyDown:
+				// Let the list handle up/down navigation
+				newListModel, cmd := m.list.Update(msg)
+				m.list = newListModel
+				cmds = append(cmds, cmd)
+				return m, tea.Batch(cmds...)
+			}
+			return m, nil
+
 		case m.state == "naming":
 			switch msg.Type {
 			case tea.KeyEnter:
@@ -123,7 +174,9 @@ func (m model) View() string {
 
 	// Base content
 	var content string
-	if m.state == "naming" {
+	if m.state == "catalog" {
+		content = m.list.View()
+	} else if m.state == "naming" {
 		content = lipgloss.JoinVertical(
 			lipgloss.Left,
 			m.list.Styles.Title.Render(m.list.Title),
@@ -177,14 +230,9 @@ func (m model) View() string {
 
 	// Apply border if window is large enough
 	if m.width >= minWidth && m.height >= minHeight {
-		borderStyle := lipgloss.NewStyle().
-			BorderStyle(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#25A065")).
-			Padding(1, 1).  // Add padding inside the border
-			Width(m.width - 2).  // Account for outer padding
-			Height(m.height - 2) // Account for outer padding
-		
-		return borderStyle.Render(contentStyle.Render(content))
+		content = appStyle.Render(contentStyle.Render(content))
+	} else {
+		content = contentStyle.Render(content)
 	}
 
 	return content

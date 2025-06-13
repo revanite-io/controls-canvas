@@ -26,13 +26,9 @@ type availableControl struct {
 	FamilyDescription string
 }
 
-func loadData() (output []availableCapability) {
+func loadData(urls []string) (output []availableCapability) {
 	var catalog layer2.Catalog
-	err := catalog.LoadFiles([]string{
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/controls.yaml",
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
-	})
+	err := catalog.LoadFiles(urls)
 	if err != nil {
 		fmt.Printf("Error loading catalog: %v\n", err)
 		os.Exit(1)
@@ -92,7 +88,47 @@ func loadData() (output []availableCapability) {
 }
 
 func loadChoices() (choices []list.Item) {
-	data := loadData()
+	defaultUrls := []string{
+		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/controls.yaml",
+		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
+		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
+	}
+	data := loadData(defaultUrls)
+
+	for _, capability := range data {
+		var threatList []string
+		var controlList []string
+		for _, threat := range capability.Threats {
+			threatList = append(threatList, threat.Data.Id)
+			for _, control := range threat.Controls {
+				if !slices.Contains(controlList, control.Data.Id) {
+					controlList = append(controlList, control.Data.Id)
+				}
+			}
+		}
+
+		description := capability.Data.Description
+		description += fmt.Sprintf("Threats: %v | Controls: %v", len(threatList), len(controlList))
+
+		choice := item{
+			id:          capability.Data.Id,
+			title:       capability.Data.Title,
+			capability:  capability,
+			description: description,
+		}
+		choices = append(choices, choice)
+	}
+
+	// Sort by title
+	sort.Slice(choices, func(i, j int) bool {
+		return choices[i].(item).capability.Data.Id < choices[j].(item).capability.Data.Id
+	})
+
+	return choices
+}
+
+func loadChoicesWithUrls(urls []string) (choices []list.Item) {
+	data := loadData(urls)
 
 	for _, capability := range data {
 		var threatList []string
