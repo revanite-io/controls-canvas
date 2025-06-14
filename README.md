@@ -12,57 +12,32 @@ A terminal-based UI tool for interactively selecting and managing cloud security
 
 ## Installation
 
+### macOS with Homebrew
+
+```bash
+brew tap revanite-io/tap
+brew install controls-canvas
+```
+
 ### Using Go
 
 ```bash
 go install github.com/revanite-io/controls-canvas@latest
 ```
 
-### From Releases
+### Direct Download
 
-Download the latest binary for your platform from the [releases page](https://github.com/revanite-io/controls-canvas/releases).
+1. Visit the [releases page](https://github.com/revanite-io/controls-canvas/releases)
+2. Download the archive for your platform:
+   - macOS ARM64: `controls-canvas_Darwin_arm64.tar.gz`
+   - macOS Intel: `controls-canvas_Darwin_x86_64.tar.gz`
+   - Linux: `controls-canvas_Linux_x86_64.tar.gz`
+   - Windows: `controls-canvas_Windows_x86_64.zip`
+3. Extract the archive
+4. Move the `controls-canvas` binary to a directory in your PATH (optional)
 
 ## Usage
 
 ```bash
 controls-canvas
 ```
-
-### Navigation
-
-- `↑/↓`: Navigate through items
-- `Enter`: Select a capability
-- `Backspace/x`: Deselect a capability
-- `Space`: Generate output
-- `/`: Filter items
-- `Esc`: Clear filter/Exit
-- `Ctrl+C`: Quit
-
-## Building from Source
-
-```bash
-git clone https://github.com/revanite-io/controls-canvas.git
-cd controls-canvas
-go build
-```
-
-## Requirements
-
-- Go 1.23 or later
-- Terminal with support for ANSI escape sequences
-- Minimum terminal width of 80 characters recommended
-
-## Output
-
-The tool generates an `output.yaml` file containing:
-- Selected capabilities
-- Associated threats
-- Mapped controls
-
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting pull requests.
-
-## License
-
-[Apache License 2.0](LICENSE) 
