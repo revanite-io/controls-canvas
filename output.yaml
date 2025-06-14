@@ -1,6 +1,6 @@
 metadata:
     id: ""
-    title: asdf
+    title: abvdde
     description: ""
     version: ""
     last-modified: ""
@@ -12,18 +12,22 @@ capabilities: []
 shared-controls:
     - reference-id: CCC
       identifiers:
-        - CCC.C01
+        - CCC.C02
+        - CCC.C03
+        - CCC.C04
+        - CCC.C05
         - CCC.C09
+        - CCC.C11
 shared-threats:
     - reference-id: CCC
       identifiers:
-        - CCC.TH02
-        - CCC.TH07
+        - CCC.TH01
         - CCC.TH09
         - CCC.TH10
+        - CCC.TH16
 shared-capabilities:
     - reference-id: CCC
       identifiers:
-        - CCC.F01
         - CCC.F02
-        - CCC.F03
+        - CCC.F06
+        - CCC.F09

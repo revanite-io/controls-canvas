@@ -29,10 +29,22 @@ type availableControl struct {
 
 func loadData(urls []string) (output []availableCapability) {
 	var catalog layer2.Catalog
-	err := catalog.LoadFiles(urls)
-	if err != nil {
-		fmt.Printf("Error loading catalog: %v\n", err)
-		os.Exit(1)
+
+	// Try to load from cache first
+	if cached, err := loadFromCache(urls); err == nil {
+		catalog = *cached
+	} else {
+		// If cache miss or error, load from URLs
+		err := catalog.LoadFiles(urls)
+		if err != nil {
+			fmt.Printf("Error loading catalog: %v\n", err)
+			os.Exit(1)
+		}
+
+		// Save to cache for next time
+		if err := saveToCache(urls, &catalog); err != nil {
+			fmt.Printf("Warning: Failed to cache catalog: %v\n", err)
+		}
 	}
 
 	for _, cap := range catalog.Capabilities {
