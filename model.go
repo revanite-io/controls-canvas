@@ -59,6 +59,7 @@ func newCatalogInputModel() model {
 	catalogCanvas := list.New(items, delegate, 0, 0)
 	catalogCanvas.Title = "Select Catalog"
 	catalogCanvas.Styles.Title = titleStyle
+	catalogCanvas.KeyMap = listKeys.KeyMap
 
 	return model{
 		list:         catalogCanvas,
