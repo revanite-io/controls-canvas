@@ -59,14 +59,24 @@ func newCatalogInputModel() model {
 	catalogCanvas := list.New(items, delegate, 0, 0)
 	catalogCanvas.Title = "Select Catalog"
 	catalogCanvas.Styles.Title = titleStyle
+	
+	// Set up key bindings
 	catalogCanvas.KeyMap = listKeys.KeyMap
+	catalogCanvas.AdditionalShortHelpKeys = func() []key.Binding {
+		return listKeys.ShortHelp()
+	}
+	catalogCanvas.AdditionalFullHelpKeys = func() []key.Binding {
+		return listKeys.ShortHelp()
+	}
 
-	return model{
+	m := model{
 		list:         catalogCanvas,
 		keys:         listKeys,
 		delegateKeys: delegateKeys,
 		state:        "catalog",
 	}
+	currentModel = m
+	return m
 }
 
 func (m model) Init() tea.Cmd {
@@ -125,6 +135,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.list = newListModel
 				cmds = append(cmds, cmd)
 				return m, tea.Batch(cmds...)
+			}
+			if key.Matches(msg, m.keys.KeyMap.Quit) {
+				return m, tea.Quit
 			}
 			return m, nil
 

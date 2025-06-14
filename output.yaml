@@ -1,6 +1,6 @@
 metadata:
     id: ""
-    title: qqq
+    title: asdf
     description: ""
     version: ""
     last-modified: ""
@@ -12,25 +12,18 @@ capabilities: []
 shared-controls:
     - reference-id: CCC
       identifiers:
-        - CCC.C06
+        - CCC.C01
         - CCC.C09
-        - CCC.C11
 shared-threats:
     - reference-id: CCC
       identifiers:
-        - CCC.TH03
-        - CCC.TH05
+        - CCC.TH02
         - CCC.TH07
         - CCC.TH09
         - CCC.TH10
-        - CCC.TH11
-        - CCC.TH16
 shared-capabilities:
     - reference-id: CCC
       identifiers:
+        - CCC.F01
+        - CCC.F02
         - CCC.F03
-        - CCC.F05
-        - CCC.F07
-        - CCC.F08
-        - CCC.F10
-        - CCC.F12
