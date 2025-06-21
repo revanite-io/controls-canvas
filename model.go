@@ -42,9 +42,9 @@ func newCatalogInputModel() model {
 			title:       "Common Cloud Controls",
 			description: "Default catalog with cloud security controls",
 			urls: []string{
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/controls.yaml",
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/controls.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/threats.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/capabilities.yaml",
 			},
 		},
 		catalogItem{
@@ -59,7 +59,7 @@ func newCatalogInputModel() model {
 	catalogCanvas := list.New(items, delegate, 0, 0)
 	catalogCanvas.Title = "Select Catalog"
 	catalogCanvas.Styles.Title = titleStyle
-	
+
 	// Set up key bindings
 	catalogCanvas.KeyMap = listKeys.KeyMap
 	catalogCanvas.AdditionalShortHelpKeys = func() []key.Binding {
@@ -94,9 +94,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		h, v := appStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
-		
+
 		m.descWidth = (msg.Width-h)/2 - 10
-		
+
 		const minWidth = 60
 		if msg.Width < minWidth {
 			m.sizeWarning = "Window too small. Please resize to view content."
@@ -227,7 +227,7 @@ func (m model) View() string {
 			}
 
 			listWidth := (m.width * 3) / 5
-			previewWidth := (m.width * 2) / 5 - 4
+			previewWidth := (m.width*2)/5 - 4
 
 			listContainer := lipgloss.NewStyle().
 				Width(listWidth).

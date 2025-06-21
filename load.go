@@ -100,15 +100,6 @@ func loadData(urls []string) (output []availableCapability) {
 	return output
 }
 
-func loadChoices() (choices []list.Item) {
-	defaultUrls := []string{
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/controls.yaml",
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/threats.yaml",
-		"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/dev/common/capabilities.yaml",
-	}
-	return loadChoicesWithUrls(defaultUrls)
-}
-
 func loadChoicesWithUrls(urls []string) (choices []list.Item) {
 	data := loadData(urls)
 
