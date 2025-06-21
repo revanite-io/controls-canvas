@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/revanite-io/sci/pkg/layer2"
+	"github.com/revanite-io/sci/layer2"
 )
 
 type availableCapability struct {

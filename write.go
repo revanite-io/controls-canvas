@@ -4,7 +4,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/revanite-io/sci/pkg/layer2"
+	"github.com/revanite-io/sci/layer2"
 	"gopkg.in/yaml.v3"
 )
 

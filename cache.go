@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/revanite-io/sci/pkg/layer2"
+	"github.com/revanite-io/sci/layer2"
 	"gopkg.in/yaml.v3"
 )
 
@@ -64,4 +64,4 @@ func saveToCache(urls []string, catalog *layer2.Catalog) error {
 	}
 
 	return nil
-} 
+}
