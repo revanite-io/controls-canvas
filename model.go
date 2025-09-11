@@ -120,7 +120,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case tea.KeyEnter:
 				if item, ok := m.list.SelectedItem().(catalogItem); ok {
 					m.selectedUrls = item.urls
-					if item.title == "Common Cloud Controls (Latest)" {
+					if item.title == "Common Cloud Controls (Edge)" {
 						choices := loadChoicesWithUrls(item.urls)
 						m.list.SetItems(choices)
 						m.list.Title = titleText
