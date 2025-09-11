@@ -39,8 +39,8 @@ func newCatalogInputModel() model {
 
 	items := []list.Item{
 		catalogItem{
-			title:       "Common Cloud Controls (Latest)",
-			description: "Latest CCC catalog with Gemara v0.7.1 compatible structure",
+			title:       "Common Cloud Controls (Edge)",
+			description: "The latest development version of CCC, pulled from the GitHub main branch",
 			urls: []string{
 				"https://raw.githubusercontent.com/finos/common-cloud-controls/main/catalogs/core/ccc/controls.yaml",
 				"https://raw.githubusercontent.com/finos/common-cloud-controls/main/catalogs/core/ccc/threats.yaml",
