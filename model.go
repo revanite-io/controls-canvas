@@ -39,12 +39,12 @@ func newCatalogInputModel() model {
 
 	items := []list.Item{
 		catalogItem{
-			title:       "Common Cloud Controls",
-			description: "Default catalog with cloud security controls",
+			title:       "Common Cloud Controls (Latest)",
+			description: "Latest CCC catalog with Gemara v0.7.1 compatible structure",
 			urls: []string{
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/controls.yaml",
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/threats.yaml",
-				"https://raw.githubusercontent.com/finos/common-cloud-controls/refs/heads/main/common/capabilities.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/main/catalogs/core/ccc/controls.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/main/catalogs/core/ccc/threats.yaml",
+				"https://raw.githubusercontent.com/finos/common-cloud-controls/main/catalogs/core/ccc/capabilities.yaml",
 			},
 		},
 		catalogItem{
@@ -120,7 +120,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case tea.KeyEnter:
 				if item, ok := m.list.SelectedItem().(catalogItem); ok {
 					m.selectedUrls = item.urls
-					if item.title == "Common Cloud Controls" {
+					if item.title == "Common Cloud Controls (Edge)" {
 						choices := loadChoicesWithUrls(item.urls)
 						m.list.SetItems(choices)
 						m.list.Title = titleText

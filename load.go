@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/revanite-io/sci/layer2"
+	"github.com/ossf/gemara/layer2"
 )
 
 type availableCapability struct {
@@ -62,8 +62,8 @@ func loadData(urls []string) (output []availableCapability) {
 				if tc.ReferenceId != "CCC" {
 					continue
 				}
-				for _, mappedCapabilityId := range tc.Identifiers {
-					if cap.Id == mappedCapabilityId {
+				for _, entry := range tc.Entries {
+					if cap.Id == entry.ReferenceId {
 						sortedCapability.Threats = append(sortedCapability.Threats, availableThreat{
 							Data: threat,
 						})
@@ -80,9 +80,9 @@ func loadData(urls []string) (output []availableCapability) {
 					if ct.ReferenceId != "CCC" {
 						continue
 					}
-					for _, threatId := range ct.Identifiers {
+					for _, entry := range ct.Entries {
 						for i, threat := range sortedCapability.Threats {
-							if threat.Data.Id == threatId {
+							if threat.Data.Id == entry.ReferenceId {
 								sortedCapability.Threats[i].Controls = append(threat.Controls, availableControl{
 									Data:              control,
 									FamilyTitle:       family.Title,

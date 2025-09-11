@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/revanite-io/sci/layer2"
+	"github.com/ossf/gemara/layer2"
 	"gopkg.in/yaml.v3"
 )
 

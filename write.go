@@ -4,7 +4,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/revanite-io/sci/layer2"
+	"github.com/ossf/gemara/layer2"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,26 +36,51 @@ func generateOutputCatalog() (outputCatalog layer2.Catalog) {
 	sort.Sort(sort.StringSlice(sharedThreats))
 	sort.Sort(sort.StringSlice(sharedCapabilities))
 
+	// Convert string slices to MappingEntry slices
+	controlEntries := make([]layer2.MappingEntry, len(sharedControls))
+	for i, controlId := range sharedControls {
+		controlEntries[i] = layer2.MappingEntry{
+			ReferenceId: controlId,
+			Strength:    1, // Default strength
+		}
+	}
+
+	threatEntries := make([]layer2.MappingEntry, len(sharedThreats))
+	for i, threatId := range sharedThreats {
+		threatEntries[i] = layer2.MappingEntry{
+			ReferenceId: threatId,
+			Strength:    1, // Default strength
+		}
+	}
+
+	capabilityEntries := make([]layer2.MappingEntry, len(sharedCapabilities))
+	for i, capabilityId := range sharedCapabilities {
+		capabilityEntries[i] = layer2.MappingEntry{
+			ReferenceId: capabilityId,
+			Strength:    1, // Default strength
+		}
+	}
+
 	outputCatalog = layer2.Catalog{
 		Metadata: layer2.Metadata{
 			Title: catalogName,
 		},
-		SharedControls: []layer2.Mapping{
+		ImportedControls: []layer2.Mapping{
 			{
 				ReferenceId: "CCC",
-				Identifiers: sharedControls,
+				Entries:     controlEntries,
 			},
 		},
-		SharedThreats: []layer2.Mapping{
+		ImportedThreats: []layer2.Mapping{
 			{
 				ReferenceId: "CCC",
-				Identifiers: sharedThreats,
+				Entries:     threatEntries,
 			},
 		},
-		SharedCapabilities: []layer2.Mapping{
+		ImportedCapabilities: []layer2.Mapping{
 			{
 				ReferenceId: "CCC",
-				Identifiers: sharedCapabilities,
+				Entries:     capabilityEntries,
 			},
 		},
 	}
